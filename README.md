@@ -115,5 +115,7 @@ CodeMerge-extension/
 
 I wanted my GitHub contribution graph to reflect my actual daily coding practice — not just project commits. Most trackers require manual input or only work for one platform. CodeMerge works across all major platforms automatically, with a secure OAuth flow I designed from scratch.
 
+DRIVE LINK FOR DEMO OF THE PROJECT : 
+https://drive.google.com/file/d/1gILuJhhZ3A6I5i_1PWt3hmsVfgNccCwq/view?usp=sharing
 
 
