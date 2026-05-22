@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>CodeMerge — Setup</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:#0d0f14; --surface:#151820; --surface2:#1c2030;
+      --border:#252a3a; --accent:#f97316; --accent2:#fb923c;
+      --text:#e8eaf0; --muted:#6b7390; --green:#22c55e;
+      --red:#ef4444; --blue:#3b82f6;
+    }
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;
+      min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px 0;}
+    body::before{content:'';position:fixed;top:0;left:50%;transform:translateX(-50%);
+      width:600px;height:300px;
+      background:radial-gradient(ellipse,rgba(249,115,22,0.10) 0%,transparent 70%);pointer-events:none;}
+    .container{width:680px;padding:0 20px;position:relative;z-index:1;}
+
+    .header{text-align:center;margin-bottom:36px;}
+    .logo{font-size:44px;margin-bottom:12px;animation:flicker 2s ease-in-out infinite alternate;}
+    @keyframes flicker{0%{transform:scale(1) rotate(-3deg)}100%{transform:scale(1.1) rotate(3deg)}}
+    .header h1{font-size:32px;font-weight:800;letter-spacing:-1px;
+      background:linear-gradient(90deg,#fff,var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+    .header p{color:var(--muted);font-size:14px;margin-top:8px;line-height:1.6;}
+
+    .steps{display:flex;justify-content:center;gap:8px;margin-bottom:36px;align-items:center;}
+    .step-dot{width:8px;height:8px;border-radius:50%;background:var(--border);transition:all .3s;}
+    .step-dot.active{background:var(--accent);width:24px;border-radius:4px;}
+    .step-dot.done{background:var(--green);}
+
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:20px;
+      padding:32px;margin-bottom:16px;animation:fadeUp .3s ease;}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+    .card h2{font-size:20px;font-weight:700;margin-bottom:6px;}
+    .card .desc{color:var(--muted);font-size:13px;margin-bottom:20px;line-height:1.6;}
+
+    .info-banner{background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.25);
+      border-radius:10px;padding:12px 16px;font-size:12px;color:#93c5fd;margin-bottom:20px;line-height:1.6;}
+    .info-banner strong{color:#bfdbfe;}
+
+    /* Platform grid */
+    .platform-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
+    .platform-card{background:var(--surface2);border:1.5px solid var(--border);border-radius:12px;
+      padding:14px 16px;display:flex;flex-direction:column;gap:0;cursor:pointer;transition:all .2s;position:relative;}
+    .platform-card:hover{border-color:var(--accent);}
+    .platform-card.selected{border-color:var(--accent);background:rgba(249,115,22,.07);}
+    .platform-card-top{display:flex;align-items:center;gap:10px;padding-right:24px;}
+    .platform-card .emoji{font-size:20px;flex-shrink:0;}
+    .platform-card .pname{font-size:13px;font-weight:700;}
+    .check-badge{position:absolute;top:10px;right:10px;width:18px;height:18px;border-radius:50%;
+      background:var(--border);display:flex;align-items:center;justify-content:center;
+      font-size:10px;transition:all .2s;color:transparent;}
+    .platform-card.selected .check-badge{background:var(--green);color:white;}
+    .purl-wrap{margin-top:8px;display:none;}
+    .platform-card.selected .purl-wrap{display:block;}
+    .platform-card input.purl-input{width:100%;background:var(--surface);border:1px solid var(--border);
+      color:var(--text);font-size:11px;padding:7px 10px;font-family:'Syne',sans-serif;
+      outline:none;border-radius:7px;transition:border-color .2s;}
+    .platform-card input.purl-input:focus{border-color:var(--accent);}
+    .platform-card input.purl-input::placeholder{color:#555;font-size:10px;}
+    .purl-label{font-size:10px;color:var(--muted);margin-bottom:4px;}
+
+    /* Setup needed banner */
+    .setup-needed-banner{display:none;background:rgba(249,115,22,.07);border:1.5px solid rgba(249,115,22,.35);
+      border-radius:14px;padding:20px;margin-bottom:16px;}
+    .setup-needed-banner h3{font-size:14px;font-weight:700;color:var(--accent);margin-bottom:10px;}
+    .setup-step{display:flex;gap:10px;align-items:flex-start;margin-bottom:10px;font-size:12px;color:var(--muted);line-height:1.6;}
+    .setup-step-num{width:20px;height:20px;border-radius:50%;background:var(--accent);color:white;
+      display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:1px;}
+    .setup-step a{color:var(--accent);text-decoration:none;font-weight:600;}
+    .setup-step a:hover{text-decoration:underline;}
+    .callback-row{display:flex;align-items:center;gap:8px;margin-top:6px;background:var(--surface);
+      border:1px solid var(--border);border-radius:8px;padding:8px 12px;}
+    .callback-url{font-family:'Space Mono',monospace;font-size:10px;color:#93c5fd;flex:1;word-break:break-all;line-height:1.5;}
+    .btn-copy-small{background:rgba(249,115,22,.15);border:1px solid rgba(249,115,22,.4);color:var(--accent);
+      border-radius:6px;padding:4px 10px;font-size:11px;font-family:'Syne',sans-serif;cursor:pointer;white-space:nowrap;}
+    .setup-done-note{font-size:11px;color:var(--muted);margin-top:12px;padding-top:12px;
+      border-top:1px solid var(--border);line-height:1.6;}
+    .setup-done-note code{background:var(--surface2);border:1px solid var(--border);border-radius:4px;
+      padding:1px 6px;font-family:'Space Mono',monospace;color:var(--accent);font-size:10px;}
+
+    /* GitHub connect section */
+    .github-connect-box{background:var(--surface2);border:1.5px solid var(--border);border-radius:16px;padding:24px;text-align:center;}
+    .gh-logo{font-size:36px;margin-bottom:12px;}
+    .gh-title{font-size:15px;font-weight:700;margin-bottom:6px;}
+    .gh-desc{font-size:12px;color:var(--muted);margin-bottom:20px;line-height:1.6;}
+    .gh-user-row{display:flex;align-items:center;gap:12px;justify-content:center;margin-bottom:16px;}
+    .gh-avatar{width:40px;height:40px;border-radius:50%;border:2px solid var(--green);}
+    .gh-username{font-size:14px;font-weight:700;color:var(--green);}
+    .gh-badge{font-size:11px;color:var(--muted);background:rgba(34,197,94,.1);
+      border:1px solid rgba(34,197,94,.25);border-radius:20px;padding:2px 10px;margin-left:6px;}
+    .btn-github-login{
+      display:inline-flex;align-items:center;gap:10px;
+      padding:13px 28px;background:#24292e;border:1.5px solid #444d56;border-radius:12px;
+      color:#fff;font-family:'Syne',sans-serif;font-size:14px;font-weight:700;
+      cursor:pointer;transition:all .2s;}
+    .btn-github-login:hover{background:#2f363d;border-color:#aaa;transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,0,0,.4);}
+    .btn-github-login svg{flex-shrink:0;}
+    .security-note{font-size:11px;color:#555;margin-top:12px;line-height:1.5;}
+    .security-note strong{color:var(--muted);}
+    .auth-error{display:none;color:var(--red);font-size:12px;margin-top:10px;}
+    .btn-gh-disconnect{background:none;border:none;color:#ef444460;font-size:11px;cursor:pointer;
+      margin-top:8px;font-family:'Syne',sans-serif;transition:color .2s;}
+    .btn-gh-disconnect:hover{color:var(--red);}
+
+    .field{margin-bottom:18px;}
+    .field label{display:block;font-size:12px;font-weight:600;color:var(--muted);
+      text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;}
+    .field input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;
+      color:var(--text);font-family:'Syne',sans-serif;font-size:13px;padding:11px 14px;
+      outline:none;transition:border-color .2s;}
+    .field input:focus{border-color:var(--accent);}
+    .field input::placeholder{color:var(--muted);}
+    .field .hint{font-size:11px;color:var(--muted);margin-top:5px;line-height:1.5;}
+
+    .selected-summary{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px;}
+    .platform-tag{background:rgba(249,115,22,.12);border:1px solid rgba(249,115,22,.3);
+      border-radius:20px;padding:4px 10px;font-size:11px;color:var(--accent);}
+
+    .nav{display:flex;gap:10px;justify-content:flex-end;}
+    .btn-back{padding:11px 22px;background:none;border:1px solid var(--border);border-radius:10px;
+      color:var(--muted);font-family:'Syne',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;}
+    .btn-back:hover{color:var(--text);border-color:var(--text);}
+    .btn-next{padding:11px 28px;background:linear-gradient(135deg,var(--accent),var(--accent2));
+      border:none;border-radius:10px;color:white;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;
+      cursor:pointer;transition:all .2s;}
+    .btn-next:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(249,115,22,.35);}
+    .btn-next:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none;}
+
+    /* Success */
+    .success{text-align:center;padding:20px 0;}
+    .success .big-emoji{font-size:64px;margin-bottom:16px;animation:pop .5s cubic-bezier(.34,1.56,.64,1);}
+    @keyframes pop{from{transform:scale(0)}to{transform:scale(1)}}
+    .success h2{font-size:26px;font-weight:800;margin-bottom:10px;}
+    .success p{color:var(--muted);font-size:14px;line-height:1.7;max-width:400px;margin:0 auto 24px;}
+    .checklist{text-align:left;background:var(--surface2);border-radius:12px;padding:16px 20px;
+      margin:0 auto 28px;max-width:440px;}
+    .check-item{display:flex;align-items:flex-start;gap:10px;font-size:13px;margin-bottom:12px;}
+    .check-item:last-child{margin:0;}
+    .check-icon{color:var(--green);font-size:16px;flex-shrink:0;margin-top:1px;}
+    .check-main{font-weight:600;}
+    .check-detail{font-size:11px;color:var(--muted);margin-top:2px;}
+    .btn-finish{padding:14px 40px;background:linear-gradient(135deg,var(--accent),var(--accent2));
+      border:none;border-radius:12px;color:white;font-family:'Syne',sans-serif;font-size:14px;font-weight:700;
+      cursor:pointer;transition:all .2s;}
+    .btn-finish:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(249,115,22,.4);}
+
+    .step-panel{display:none;}
+    .step-panel.active{display:block;}
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="logo">🔥</div>
+    <h1>Welcome to CodeMerge</h1>
+    <p>Set up automatic streak tracking in 2 steps.<br>Zero manual input — your streak updates itself every time you solve.</p>
+  </div>
+
+  <div class="steps">
+    <div class="step-dot active" id="dot0"></div>
+    <div class="step-dot"        id="dot1"></div>
+    <div class="step-dot"        id="dot2"></div>
+  </div>
+
+  <!-- STEP 0: Pick Platforms -->
+  <div class="step-panel active" id="step0">
+    <div class="card">
+      <h2>🎯 Your Coding Platforms</h2>
+      <p class="desc">Select the platforms you use and paste your profile URL. CodeMerge auto-detects every "Accepted" verdict — no manual input ever.</p>
+      <div class="info-banner">
+        <strong>🤖 Fully Automatic:</strong> CodeMerge watches silently in the background. The moment it sees an "Accepted", your streak updates and the solve commits to GitHub — on its own.
+      </div>
+      <div class="platform-grid" id="platformGrid"></div>
+    </div>
+    <div class="nav">
+      <button class="btn-next" id="next0">Connect GitHub →</button>
+    </div>
+  </div>
+
+  <!-- STEP 1: GitHub OAuth -->
+  <div class="step-panel" id="step1">
+    <div class="card">
+      <h2>🔗 Connect GitHub</h2>
+      <p class="desc">CodeMerge commits a log entry every time a solve is detected. Just sign in with GitHub — no tokens, no passwords, nothing to copy-paste.</p>
+
+      <div class="selected-summary" id="selectedPlatformsSummary"></div>
+
+      <!-- One-time developer setup banner (hidden once client ID is set) -->
+      <div class="setup-needed-banner" id="setupNeededBanner">
+        <h3>⚙️ One-Time Developer Setup (2 min)</h3>
+        <div class="setup-step">
+          <div class="setup-step-num">1</div>
+          <div>Open <a href="https://github.com/settings/developers" target="_blank">github.com/settings/developers</a> → <strong>OAuth Apps</strong> → <strong>New OAuth App</strong></div>
+        </div>
+        <div class="setup-step">
+          <div class="setup-step-num">2</div>
+          <div>
+            Set <strong>Authorization callback URL</strong> to exactly this:<br>
+            <div class="callback-row">
+              <span class="callback-url" id="callbackUrl">Loading…</span>
+              <button class="btn-copy-small" id="copyCallbackBtn">Copy</button>
+            </div>
+          </div>
+        </div>
+        <div class="setup-step">
+          <div class="setup-step-num">3</div>
+          <div>Click <strong>Register application</strong> → copy the <strong>Client ID</strong></div>
+        </div>
+        <div class="setup-step">
+          <div class="setup-step-num">4</div>
+          <div>Open <code style="background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:1px 6px;font-family:monospace;font-size:11px;color:var(--accent)">background.js</code> → replace <code style="background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:1px 6px;font-family:monospace;font-size:11px;color:var(--accent)">YOUR_GITHUB_CLIENT_ID</code> with your Client ID → reload the extension</div>
+        </div>
+        <div class="setup-done-note">
+          ✅ After reloading, the "Continue with GitHub" button will appear here automatically. You only do this once — users of your extension never see this screen.
+        </div>
+      </div>
+
+      <!-- GitHub OAuth button -->
+      <div class="github-connect-box" id="githubConnectBox">
+        <div class="gh-logo">🐙</div>
+        <div class="gh-title">Sign in with GitHub</div>
+        <div class="gh-desc">
+          A secure popup will open. You'll authorize CodeMerge to commit files to one repo of your choice.<br>
+          <strong style="color:var(--text)">No tokens to generate or paste.</strong>
+        </div>
+        <button class="btn-github-login" id="githubLoginBtn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/>
+          </svg>
+          Continue with GitHub
+        </button>
+        <div id="authErrorMsg" class="auth-error"></div>
+        <div class="security-note">
+          CodeMerge only requests <strong>repo</strong> scope to commit your coding logs.<br>
+          Your credentials are handled entirely by GitHub — never seen by CodeMerge.
+        </div>
+      </div>
+
+      <!-- Connected state -->
+      <div id="githubConnectedState" style="display:none;text-align:center;margin-top:12px;">
+        <div class="gh-user-row">
+          <img id="ghAvatar" class="gh-avatar" src="" alt=""/>
+          <div>
+            <span id="ghUsername" class="gh-username"></span>
+            <span class="gh-badge">✓ Connected</span>
+          </div>
+        </div>
+        <div class="field" style="margin-top:16px;text-align:left;">
+          <label>Which repo should CodeMerge commit to?</label>
+          <input id="githubRepo" type="url" placeholder="https://github.com/yourusername/my-coding-journey" />
+          <div class="hint">Create a new repo on GitHub if you don't have one yet. CodeMerge will auto-create the log files.</div>
+        </div>
+        <button class="btn-gh-disconnect" id="ghDisconnectBtn">Disconnect and use a different account</button>
+      </div>
+    </div>
+    <div class="nav">
+      <button class="btn-back" id="back1">← Back</button>
+      <button class="btn-next" id="next1" disabled>Finish Setup →</button>
+    </div>
+  </div>
+
+  <!-- STEP 2: Success -->
+  <div class="step-panel" id="step2">
+    <div class="card">
+      <div class="success">
+        <div class="big-emoji">🚀</div>
+        <h2>You're all set!</h2>
+        <p>CodeMerge is active. Solve a problem on any of your selected platforms and watch your streak update automatically.</p>
+        <div class="checklist">
+          <div class="check-item">
+            <span class="check-icon">✅</span>
+            <div><div class="check-main">Platforms connected</div><div class="check-detail" id="platformsSummaryText"></div></div>
+          </div>
+          <div class="check-item">
+            <span class="check-icon">✅</span>
+            <div><div class="check-main">GitHub connected securely</div><div class="check-detail" id="repoSummaryText"></div></div>
+          </div>
+          <div class="check-item">
+            <span class="check-icon">✅</span>
+            <div><div class="check-main">Auto-detection active — zero manual input</div><div class="check-detail">Streak recalculates automatically on every accepted solve</div></div>
+          </div>
+          <div class="check-item">
+            <span class="check-icon">✅</span>
+            <div><div class="check-main">Auto-commit to GitHub</div><div class="check-detail">Each solve is logged to <code style="color:var(--accent)">coding-log/YYYY-MM-DD.md</code></div></div>
+          </div>
+          <div class="check-item">
+            <span class="check-icon">✅</span>
+            <div><div class="check-main">Daily reminder at 8 PM</div></div>
+          </div>
+        </div>
+        <button class="btn-finish" id="finishBtn">Start Coding 🔥</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="onboarding.js"></script>
+</body>
+</html>

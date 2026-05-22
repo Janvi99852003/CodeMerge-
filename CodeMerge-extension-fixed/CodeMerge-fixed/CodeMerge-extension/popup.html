@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>CodeMerge</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="popup.css"/>
+</head>
+<body>
+
+  <!-- Not setup state -->
+  <div id="setupPrompt" style="display:none">
+    <header>
+      <div class="logo"><div class="flame-icon">🔥</div><span class="logo-text">CodeMerge</span></div>
+    </header>
+    <div style="padding:28px 20px;text-align:center">
+      <div style="font-size:40px;margin-bottom:12px">⚙️</div>
+      <div style="font-size:15px;font-weight:700;margin-bottom:8px">Setup Required</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:20px;line-height:1.6">
+        Complete the one-time setup to connect your GitHub repo and select your coding platforms.
+      </div>
+      <button class="btn-setup" id="openSetupBtn">Open Setup Wizard →</button>
+    </div>
+  </div>
+
+  <!-- Main state -->
+  <div id="mainView" style="display:none">
+    <header>
+      <div class="logo"><div class="flame-icon">🔥</div><span class="logo-text">CodeMerge</span></div>
+      <div style="display:flex;gap:6px;align-items:center">
+        <div class="github-badge" id="githubBadge" title="Auto-commits to GitHub active">⚡ GitHub</div>
+        <button class="settings-btn" id="settingsBtn" title="Re-open setup">⚙</button>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div class="streak-display">
+        <div class="streak-number" id="streakNumber">0</div>
+        <div class="streak-label">day streak</div>
+        <div class="streak-auto-label" id="streakBadge">auto-tracked</div>
+      </div>
+      <div class="streak-meta">
+        <div class="meta-item">
+          <span class="meta-val" id="longestStreak">0</span>
+          <span class="meta-label">Best</span>
+        </div>
+        <div class="divider"></div>
+        <div class="meta-item">
+          <span class="meta-val" id="totalSolves">0</span>
+          <span class="meta-label">Total</span>
+        </div>
+        <div class="divider"></div>
+        <div class="meta-item">
+          <span class="meta-val" id="todayCount">0</span>
+          <span class="meta-label">Today</span>
+        </div>
+      </div>
+    </section>
+
+    <nav class="tabs">
+      <button class="tab active" data-tab="heatmap">Calendar</button>
+      <button class="tab" data-tab="platforms">Platforms</button>
+      <button class="tab" data-tab="today">Today</button>
+    </nav>
+
+    <div class="tab-content active" id="tab-heatmap">
+      <div class="heatmap-header">
+        <span class="heatmap-title">Last 13 Weeks</span>
+        <span class="heatmap-legend">
+          <span class="legend-box l0"></span>
+          <span class="legend-box l1"></span>
+          <span class="legend-box l2"></span>
+          <span class="legend-box l3"></span>
+          <span class="legend-text">More</span>
+        </span>
+      </div>
+      <div class="heatmap" id="heatmap"></div>
+      <div class="heatmap-tooltip" id="tooltip"></div>
+    </div>
+
+    <div class="tab-content" id="tab-platforms">
+      <div class="platforms-list" id="platformsList"></div>
+    </div>
+
+    <div class="tab-content" id="tab-today">
+      <div class="today-list" id="todayList"></div>
+    </div>
+
+    <div class="popup-footer">
+      <div class="footer-note" id="footerNote"></div>
+      <button class="danger-btn" id="clearBtn">Clear data</button>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
