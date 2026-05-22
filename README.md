@@ -117,6 +117,3 @@ I wanted my GitHub contribution graph to reflect my actual daily coding practice
 
 
 
-## License
-
-MIT
